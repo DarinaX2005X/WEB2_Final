@@ -1,81 +1,50 @@
-const Joi = require('joi');
 const Transaction = require('../models/Transaction');
 
-const transactionSchema = Joi.object({
-  title: Joi.string().required(),
-  description: Joi.string().allow('').optional(),
-  amount: Joi.number().required(),
-  type: Joi.string().valid('income', 'expense').required()
-});
-
-exports.createTransaction = async (req, res, next) => {
+// POST /transaction — добавить транзакцию
+exports.createTransaction = async (req, res) => {
+  const { title, description, amount, type } = req.body;
+  if (!title || !amount || !type) return res.redirect('/dashboard');
   try {
-    const { error } = transactionSchema.validate(req.body);
-    if (error) return res.status(400).json({ error: error.details[0].message });
-    const { title, description, amount, type } = req.body;
-    const newTransaction = new Transaction({ user: req.user.id, title, description, amount, type });
-    await newTransaction.save();
-    res.status(201).json({ transaction: newTransaction });
+    const newTx = new Transaction({ user: req.user.id, title, description, amount, type });
+    await newTx.save();
+    res.redirect('/dashboard');
   } catch (err) {
-    next(err);
+    console.error(err);
+    res.redirect('/dashboard');
   }
 };
 
-exports.getTransactions = async (req, res, next) => {
+// POST /transaction/edit/:id — редактирование транзакции
+exports.editTransaction = async (req, res) => {
+  const { title, description, amount, type } = req.body;
   try {
-    let transactions;
-    if (req.user.role === 'admin') {
-      transactions = await Transaction.find({}).sort({ date: -1 });
-    } else {
-      transactions = await Transaction.find({ user: req.user.id }).sort({ date: -1 });
-    }
-    res.status(200).json({ transactions });
+    const tx = await Transaction.findById(req.params.id);
+    if (!tx) return res.redirect('/dashboard');
+    if (tx.user.toString() !== req.user.id && req.user.role !== 'admin')
+      return res.send('Access denied.');
+    tx.title = title;
+    tx.description = description;
+    tx.amount = amount;
+    tx.type = type;
+    await tx.save();
+    res.redirect('/dashboard');
   } catch (err) {
-    next(err);
+    console.error(err);
+    res.redirect('/dashboard');
   }
 };
 
-exports.getTransactionById = async (req, res, next) => {
+// POST /transaction/delete/:id — удаление транзакции
+exports.deleteTransaction = async (req, res) => {
   try {
-    const transaction = await Transaction.findById(req.params.id);
-    if (!transaction) return res.status(404).json({ error: 'Transaction not found.' });
-    if (transaction.user.toString() !== req.user.id && req.user.role !== 'admin')
-      return res.status(403).json({ error: 'Access denied.' });
-    res.status(200).json({ transaction });
-  } catch (err) {
-    next(err);
-  }
-};
-
-exports.updateTransaction = async (req, res, next) => {
-  try {
-    const { error } = transactionSchema.validate(req.body);
-    if (error) return res.status(400).json({ error: error.details[0].message });
-    const transaction = await Transaction.findById(req.params.id);
-    if (!transaction) return res.status(404).json({ error: 'Transaction not found.' });
-    if (transaction.user.toString() !== req.user.id && req.user.role !== 'admin')
-      return res.status(403).json({ error: 'Access denied.' });
-    const { title, description, amount, type } = req.body;
-    transaction.title = title;
-    transaction.description = description;
-    transaction.amount = amount;
-    transaction.type = type;
-    await transaction.save();
-    res.status(200).json({ transaction });
-  } catch (err) {
-    next(err);
-  }
-};
-
-exports.deleteTransaction = async (req, res, next) => {
-  try {
-    const transaction = await Transaction.findById(req.params.id);
-    if (!transaction) return res.status(404).json({ error: 'Transaction not found.' });
-    if (transaction.user.toString() !== req.user.id && req.user.role !== 'admin')
-      return res.status(403).json({ error: 'Access denied.' });
+    const tx = await Transaction.findById(req.params.id);
+    if (!tx) return res.redirect('/dashboard');
+    if (tx.user.toString() !== req.user.id && req.user.role !== 'admin')
+      return res.send('Access denied.');
     await Transaction.findByIdAndDelete(req.params.id);
-    res.status(200).json({ message: 'Transaction deleted successfully.' });
+    res.redirect('/dashboard');
   } catch (err) {
-    next(err);
+    console.error(err);
+    res.redirect('/dashboard');
   }
 };

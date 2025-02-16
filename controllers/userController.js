@@ -1,29 +1,24 @@
-const Joi = require('joi');
 const User = require('../models/User');
 
-const updateProfileSchema = Joi.object({
-  username: Joi.string().required(),
-  email: Joi.string().email().required()
-});
-
-exports.getProfile = async (req, res, next) => {
+// Если требуется страница профиля, можно добавить GET /users/profile
+exports.getProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('-password');
-    if (!user) return res.status(404).json({ error: 'User not found.' });
-    res.status(200).json({ user });
+    const user = await User.findById(req.user.id);
+    res.render('profile', { user, message: null, error: null });
   } catch (err) {
-    next(err);
+    console.error(err);
+    res.redirect('/dashboard');
   }
 };
 
-exports.updateProfile = async (req, res, next) => {
+// POST /users/profile/update — обновление профиля
+exports.updateProfile = async (req, res) => {
+  const { username, email } = req.body;
   try {
-    const { error } = updateProfileSchema.validate(req.body);
-    if (error) return res.status(400).json({ error: error.details[0].message });
-    const { username, email } = req.body;
-    const updatedUser = await User.findByIdAndUpdate(req.user.id, { username, email }, { new: true }).select('-password');
-    res.status(200).json({ user: updatedUser });
+    await User.findByIdAndUpdate(req.user.id, { username, email }, { new: true });
+    res.redirect('/dashboard');
   } catch (err) {
-    next(err);
+    console.error(err);
+    res.send('Profile update failed.');
   }
 };

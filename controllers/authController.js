@@ -1,59 +1,66 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const Joi = require('joi');
 const User = require('../models/User');
 
-const registerSchema = Joi.object({
-  username: Joi.string().required(),
-  email: Joi.string().email().required(),
-  password: Joi.string().min(6).required(),
-  confirmPassword: Joi.ref('password')
-}).with('password', 'confirmPassword');
+// GET /login
+exports.loginView = (req, res) => {
+  res.render('login', { error: null, formData: {} });
+};
 
-const loginSchema = Joi.object({
-  email: Joi.string().email().required(),
-  password: Joi.string().required()
-});
-
-exports.register = async (req, res, next) => {
+// POST /login
+exports.loginPost = async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.render('login', { error: 'Please fill in all fields.', formData: req.body });
+  }
   try {
-    const { error } = registerSchema.validate(req.body);
-    if (error) {
-      return res.status(400).json({ error: error.details[0].message });
-    }
-    const { username, email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) return res.render('login', { error: 'User not found.', formData: req.body });
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.render('login', { error: 'Incorrect password.', formData: req.body });
+    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1d' });
+    res.cookie('token', token, { httpOnly: true });
+    res.redirect('/dashboard');
+  } catch (err) {
+    console.error(err);
+    res.render('login', { error: 'Login failed. Please try again.', formData: req.body });
+  }
+};
+
+// GET /register
+exports.registerView = (req, res) => {
+  res.render('register', { error: null, formData: {} });
+};
+
+// POST /register
+exports.registerPost = async (req, res) => {
+  const { username, email, password, confirmPassword } = req.body;
+  if (!username || !email || !password || !confirmPassword) {
+    return res.render('register', { error: 'Please fill in all fields.', formData: req.body });
+  }
+  if (password !== confirmPassword) {
+    return res.render('register', { error: 'Passwords do not match.', formData: req.body });
+  }
+  if (password.length < 6) {
+    return res.render('register', { error: 'Password must be at least 6 characters.', formData: req.body });
+  }
+  try {
     const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ error: 'Email already registered.' });
-    }
+    if (existingUser) return res.render('register', { error: 'Email is already registered.', formData: req.body });
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({ username, email, password: hashedPassword });
     await newUser.save();
     const token = jwt.sign({ id: newUser._id, role: newUser.role }, process.env.JWT_SECRET, { expiresIn: '1d' });
-    res.status(201).json({ token });
+    res.cookie('token', token, { httpOnly: true });
+    res.redirect('/dashboard');
   } catch (err) {
-    next(err);
+    console.error(err);
+    res.render('register', { error: 'Registration failed. Please try again.', formData: req.body });
   }
 };
 
-exports.login = async (req, res, next) => {
-  try {
-    const { error } = loginSchema.validate(req.body);
-    if (error) {
-      return res.status(400).json({ error: error.details[0].message });
-    }
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ error: 'User not found.' });
-    }
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ error: 'Incorrect password.' });
-    }
-    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1d' });
-    res.status(200).json({ token });
-  } catch (err) {
-    next(err);
-  }
+// GET /logout
+exports.logout = (req, res) => {
+  res.clearCookie('token');
+  res.redirect('/login');
 };

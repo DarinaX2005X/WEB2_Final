@@ -8,7 +8,7 @@ const errorHandler = require('./middleware/errorMiddleware');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Connect to MongoDB
+// Подключение к MongoDB
 connectDB();
 
 // Middleware
@@ -17,28 +17,28 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Set EJS as view engine
+// Установка EJS в качестве шаблонизатора
 app.set('view engine', 'ejs');
 
-// API Routes
+// Подключаем маршруты
 const authRoutes = require('./routes/authRoutes');
-const userRoutes = require('./routes/userRoutes');
 const transactionRoutes = require('./routes/transactionRoutes');
+const userRoutes = require('./routes/userRoutes');
 
-app.use('/api', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/transactions', transactionRoutes);
+app.use('/', authRoutes); // /login, /register, /logout
+app.use('/transaction', transactionRoutes);
+app.use('/users', userRoutes);
 
-// View Routes
+// Страница index (можно настроить как главную страницу)
 app.get('/', (req, res) => {
   res.render('index');
 });
 
+// Dashboard view route (рендер EJS-дашборда)
 const jwt = require('jsonwebtoken');
 const User = require('./models/User');
 const Transaction = require('./models/Transaction');
 
-// Dashboard view route (renders EJS view)
 app.get('/dashboard', async (req, res, next) => {
   try {
     const token = req.cookies.token;
@@ -60,19 +60,9 @@ app.get('/dashboard', async (req, res, next) => {
   }
 });
 
-// Login & Register view routes
-app.get('/login', (req, res) => {
-  res.render('login', { error: null, formData: {} });
-});
-
-app.get('/register', (req, res) => {
-  res.render('register', { error: null, formData: {} });
-});
-
-// Global error handler
+// Глобальный обработчик ошибок
 app.use(errorHandler);
 
-// Start the server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
