@@ -1,6 +1,6 @@
 const User = require('../models/User');
 
-// Если требуется страница профиля, можно добавить GET /users/profile
+// Если требуется отдельная страница профиля, можно добавить GET /users/profile
 exports.getProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
@@ -11,7 +11,7 @@ exports.getProfile = async (req, res) => {
   }
 };
 
-// POST /users/profile/update — обновление профиля
+// POST /users/profile/update — обновить профиль
 exports.updateProfile = async (req, res) => {
   const { username, email } = req.body;
   try {

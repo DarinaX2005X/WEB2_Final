@@ -4,6 +4,9 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const connectDB = require('./config/db');
 const errorHandler = require('./middleware/errorMiddleware');
+const jwt = require('jsonwebtoken');
+const User = require('./models/User');
+const Transaction = require('./models/Transaction');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -12,8 +15,8 @@ const PORT = process.env.PORT || 3000;
 connectDB();
 
 // Middleware
-app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -25,20 +28,16 @@ const authRoutes = require('./routes/authRoutes');
 const transactionRoutes = require('./routes/transactionRoutes');
 const userRoutes = require('./routes/userRoutes');
 
-app.use('/', authRoutes); // /login, /register, /logout
+app.use('/', authRoutes);           // /login, /register, /logout
 app.use('/transaction', transactionRoutes);
 app.use('/users', userRoutes);
 
-// Страница index (можно настроить как главную страницу)
+// Страница index (главная)
 app.get('/', (req, res) => {
   res.render('index');
 });
 
-// Dashboard view route (рендер EJS-дашборда)
-const jwt = require('jsonwebtoken');
-const User = require('./models/User');
-const Transaction = require('./models/Transaction');
-
+// Dashboard — рендер EJS-дашборда
 app.get('/dashboard', async (req, res, next) => {
   try {
     const token = req.cookies.token;
@@ -51,12 +50,14 @@ app.get('/dashboard', async (req, res, next) => {
     } else {
       transactions = await Transaction.find({ user: user._id }).sort({ date: -1 });
     }
+    transactions = await Transaction.populate(transactions, { path: 'user' });
     const totalTransactions = transactions.length;
     const totalIncome = transactions.reduce((sum, tx) => tx.type === 'income' ? sum + tx.amount : sum, 0);
     const totalExpense = transactions.reduce((sum, tx) => tx.type === 'expense' ? sum + tx.amount : sum, 0);
     res.render('dashboard', { user, transactions, totalTransactions, totalIncome, totalExpense });
   } catch (err) {
-    next(err);
+    console.error(err);
+    res.redirect('/login');
   }
 });
 

@@ -35,18 +35,19 @@ exports.registerView = (req, res) => {
 // POST /register
 exports.registerPost = async (req, res) => {
   const { username, email, password, confirmPassword } = req.body;
+  const formData = { username, email };
   if (!username || !email || !password || !confirmPassword) {
-    return res.render('register', { error: 'Please fill in all fields.', formData: req.body });
+    return res.render('register', { error: 'Please fill in all fields.', formData });
   }
   if (password !== confirmPassword) {
-    return res.render('register', { error: 'Passwords do not match.', formData: req.body });
+    return res.render('register', { error: 'Passwords do not match.', formData });
   }
   if (password.length < 6) {
-    return res.render('register', { error: 'Password must be at least 6 characters.', formData: req.body });
+    return res.render('register', { error: 'Password must be at least 6 characters.', formData });
   }
   try {
     const existingUser = await User.findOne({ email });
-    if (existingUser) return res.render('register', { error: 'Email is already registered.', formData: req.body });
+    if (existingUser) return res.render('register', { error: 'Email is already registered.', formData });
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({ username, email, password: hashedPassword });
     await newUser.save();
@@ -55,7 +56,7 @@ exports.registerPost = async (req, res) => {
     res.redirect('/dashboard');
   } catch (err) {
     console.error(err);
-    res.render('register', { error: 'Registration failed. Please try again.', formData: req.body });
+    res.render('register', { error: 'Registration failed. Please try again.', formData });
   }
 };
 

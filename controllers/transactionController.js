@@ -14,7 +14,7 @@ exports.createTransaction = async (req, res) => {
   }
 };
 
-// POST /transaction/edit/:id — редактирование транзакции
+// POST /transaction/edit/:id — редактировать транзакцию
 exports.editTransaction = async (req, res) => {
   const { title, description, amount, type } = req.body;
   try {
@@ -34,7 +34,7 @@ exports.editTransaction = async (req, res) => {
   }
 };
 
-// POST /transaction/delete/:id — удаление транзакции
+// POST /transaction/delete/:id — удалить транзакцию
 exports.deleteTransaction = async (req, res) => {
   try {
     const tx = await Transaction.findById(req.params.id);

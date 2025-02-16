@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-exports.authenticate = (req, res, next) => {
+exports.authenticateJWT = (req, res, next) => {
   const token = req.cookies.token;
   if (!token) return res.redirect('/login');
   try {
