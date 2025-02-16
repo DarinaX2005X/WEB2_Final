@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard - Finance Tracker</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Welcome, <%= user.username %>!</h1>
+    <nav>
+      <button id="editProfileBtn">Edit Profile</button>
+      <a href="/logout">Logout</a>
+    </nav>
+  </header>
+
+  <!-- Stats -->
+  <section class="stats">
+    <div class="stat-card">
+      <h3>Total Transactions</h3>
+      <p><%= totalTransactions %></p>
+    </div>
+    <div class="stat-card">
+      <h3>Total Income</h3>
+      <p>$ <%= totalIncome.toFixed(2) %></p>
+    </div>
+    <div class="stat-card">
+      <h3>Total Expense</h3>
+      <p>$ <%= totalExpense.toFixed(2) %></p>
+    </div>
+  </section>
+
+  <!-- Pie Chart -->
+  <section class="chart-container">
+    <canvas id="pieChart"></canvas>
+  </section>
+
+  <!-- Transactions Section -->
+  <section class="transactions">
+    <div class="transactions-header">
+      <h2>Transactions</h2>
+      <div class="filter-container">
+        <label for="filter">Filter:</label>
+        <select id="filter">
+          <option value="all" selected>All</option>
+          <option value="income">Income</option>
+          <option value="expense">Expense</option>
+        </select>
+      </div>
+      <button id="addTransactionBtn">Add Transaction</button>
+    </div>
+
+    <table id="transactionsTable">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Type</th>
+          <th>Amount</th>
+          <th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% transactions.forEach(function(tx) { %>
+          <tr data-type="<%= tx.type %>">
+            <td><%= tx.title %></td>
+            <td><%= tx.description %></td>
+            <td class="<%= tx.type %>"><%= tx.type === 'income' ? 'Income' : 'Expense' %></td>
+            <td class="amount <%= tx.type %>">
+              <%= (tx.type === 'income' ? '+' : '-') + '$' + tx.amount.toFixed(2) %>
+            </td>
+            <td><%= new Date(tx.date).toLocaleDateString() %></td>
+            <td>
+              <button class="editBtn"
+                      data-id="<%= tx._id %>"
+                      data-title="<%= tx.title %>"
+                      data-description="<%= tx.description %>"
+                      data-amount="<%= tx.amount %>"
+                      data-type="<%= tx.type %>">
+                Edit
+              </button>
+              <form action="/api/transactions/<%= tx._id %>" method="POST" style="display:inline;">
+                <input type="hidden" name="_method" value="DELETE">
+                <button type="submit" onclick="return confirm('Are you sure?')">Delete</button>
+              </form>
+            </td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Modal for Adding Transaction -->
+  <div id="addModal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="addClose">&times;</span>
+      <h2>Add Transaction</h2>
+      <form action="/api/transactions" method="POST">
+        <label>Title:</label>
+        <input type="text" name="title" required>
+        <label>Description:</label>
+        <textarea name="description"></textarea>
+        <label>Amount ($):</label>
+        <input type="number" step="0.01" name="amount" required>
+        <label>Type:</label>
+        <select name="type" required>
+          <option value="income">Income</option>
+          <option value="expense">Expense</option>
+        </select>
+        <button type="submit">Add</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal for Editing Transaction -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="editClose">&times;</span>
+      <h2>Edit Transaction</h2>
+      <form id="editForm" method="POST">
+        <label>Title:</label>
+        <input type="text" name="title" id="editTitle" required>
+        <label>Description:</label>
+        <textarea name="description" id="editDescription"></textarea>
+        <label>Amount ($):</label>
+        <input type="number" step="0.01" name="amount" id="editAmount" required>
+        <label>Type:</label>
+        <select name="type" id="editType" required>
+          <option value="income">Income</option>
+          <option value="expense">Expense</option>
+        </select>
+        <button type="submit">Save</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal for Editing Profile -->
+  <div id="profileModal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="profileClose">&times;</span>
+      <h2>Edit Profile</h2>
+      <form action="/api/users/profile" method="POST">
+        <!-- Use method override if needed for PUT -->
+        <input type="hidden" name="_method" value="PUT">
+        <label>Username:</label>
+        <input type="text" name="username" value="<%= user.username %>" required>
+        <label>Email:</label>
+        <input type="email" name="email" value="<%= user.email %>" required>
+        <button type="submit">Save</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Pie Chart Initialization
+    const ctx = document.getElementById('pieChart').getContext('2d');
+    const pieChart = new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: ['Income', 'Expense'],
+        datasets: [{
+          data: <%= JSON.stringify([totalIncome, totalExpense]) %>,
+          backgroundColor: ['#4CAF50', '#F44336']
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false
+      }
+    });
+
+    // Modal for Adding Transaction
+    const addModal = document.getElementById('addModal');
+    const addBtn = document.getElementById('addTransactionBtn');
+    const addClose = document.getElementById('addClose');
+    addBtn.onclick = () => { addModal.style.display = 'block'; }
+    addClose.onclick = () => { addModal.style.display = 'none'; }
+
+    // Modal for Editing Transaction
+    const editModal = document.getElementById('editModal');
+    const editClose = document.getElementById('editClose');
+    const editForm = document.getElementById('editForm');
+    const editTitle = document.getElementById('editTitle');
+    const editDescription = document.getElementById('editDescription');
+    const editAmount = document.getElementById('editAmount');
+    const editType = document.getElementById('editType');
+
+    document.querySelectorAll('.editBtn').forEach(button => {
+      button.addEventListener('click', function() {
+        const id = this.getAttribute('data-id');
+        editTitle.value = this.getAttribute('data-title');
+        editDescription.value = this.getAttribute('data-description');
+        editAmount.value = this.getAttribute('data-amount');
+        editType.value = this.getAttribute('data-type');
+        editForm.action = '/api/transactions/' + id;
+        // Use method override (PUT) if needed
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = '_method';
+        hiddenInput.value = 'PUT';
+        editForm.appendChild(hiddenInput);
+        editModal.style.display = 'block';
+      });
+    });
+
+    editClose.onclick = () => { editModal.style.display = 'none'; }
+
+    // Modal for Editing Profile
+    const profileModal = document.getElementById('profileModal');
+    const editProfileBtn = document.getElementById('editProfileBtn');
+    const profileClose = document.getElementById('profileClose');
+    editProfileBtn.onclick = () => { profileModal.style.display = 'block'; }
+    profileClose.onclick = () => { profileModal.style.display = 'none'; }
+
+    // Close modals when clicking outside
+    window.onclick = function(event) {
+      if (event.target == addModal) { addModal.style.display = 'none'; }
+      if (event.target == editModal) { editModal.style.display = 'none'; }
+      if (event.target == profileModal) { profileModal.style.display = 'none'; }
+    }
+
+    // Filter Transactions
+    document.getElementById('filter').addEventListener('change', function() {
+      const filter = this.value;
+      const rows = document.querySelectorAll('#transactionsTable tbody tr');
+      rows.forEach(row => {
+        row.style.display = (filter === 'all' || row.getAttribute('data-type') === filter) ? '' : 'none';
+      });
+    });
+  </script>
+</body>
+</html>
