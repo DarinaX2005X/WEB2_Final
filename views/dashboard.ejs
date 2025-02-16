@@ -83,7 +83,6 @@
                 Edit
               </button>
               <form class="deleteForm" action="/transaction/delete/<%= tx._id %>" method="POST" style="display:inline;">
-                <!-- Кнопка не отправляет форму сразу -->
                 <button type="button" class="deleteBtn">Delete</button>
               </form>
             </td>
@@ -146,17 +145,40 @@
     <div class="modal-content">
       <span class="close" id="profileClose">&times;</span>
       <h2>Edit Profile</h2>
+      <% if (typeof profileError !== 'undefined' && profileError) { %>
+        <p id="profileError" class="error"><%= profileError %></p>
+      <% } %>
       <div class="form-container">
         <form action="/users/profile/update" method="POST">
           <label>Username:</label>
           <input type="text" name="username" value="<%= user.username %>" required>
           <label>Email:</label>
           <input type="email" name="email" value="<%= user.email %>" required>
+          <label>Old Password (if changing):</label>
+          <input type="password" name="oldPassword">
+          <label>New Password:</label>
+          <input type="password" name="newPassword">
+          <label>Confirm New Password:</label>
+          <input type="password" name="confirmNewPassword">
           <button type="submit">Save</button>
         </form>
       </div>
     </div>
   </div>
+
+  <% if (typeof profileModalOpen !== 'undefined' && profileModalOpen) { %>
+    <script>
+      // Keep the profile modal open if profileModalOpen flag is set
+      document.getElementById('profileModal').style.display = 'block';
+    </script>
+  <% } %>
+
+  <script>
+    // When the profile modal's close button is clicked, redirect to '/dashboard'
+    document.getElementById('profileClose').onclick = () => {
+      window.location.href = '/dashboard';
+    };
+  </script>
 
   <!-- Modal for Deletion Confirmation -->
   <div id="deleteModal" class="modal">
@@ -210,7 +232,7 @@
         editDescription.value = this.getAttribute('data-description');
         editAmount.value = this.getAttribute('data-amount');
         editType.value = this.getAttribute('data-type');
-        // Обновляем action для редактирования транзакции:
+        // Set the action for editing (note: route is /transaction/edit/:id)
         editForm.action = '/transaction/edit/' + id;
         editModal.style.display = 'block';
       });

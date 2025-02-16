@@ -11,7 +11,7 @@
     <% if (error) { %>
       <p class="error"><%= error %></p>
     <% } %>
-    <form action="/register" method="POST">
+    <form action="/register" method="POST" novalidate>
       <label>Username:</label>
       <input type="text" name="username" value="<%= formData.username || '' %>" required>
       
