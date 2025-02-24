@@ -4,37 +4,63 @@
   <meta charset="UTF-8">
   <title>Dashboard - Finance Tracker</title>
   <link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet"> 
+
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+
   <header>
-    <h1>Welcome, <%= user.username %>!</h1>
-    <nav>
-      <button id="editProfileBtn">Edit Profile</button>
-      <a href="/logout">Logout</a>
-    </nav>
-  </header>
+    <div class="header-left">
+      <h1>Welcome, <%= user.username %>!</h1>
+      <p>Dashboard</p>
+    </div>
+
+    <div class="header-right">
+      <div class="header-button">
+        <img src="/edit.png" id="editProfileBtn">
+      </div>  
+      <div class="header-button">
+        <a href="/logout">
+          <img src="/exit.png" id="editProfileBtn">
+        </a>      
+      </div>  
+    </div>
+  </header> 
+
+  <div class="content">
+
+  <div class="sidebar">
+    <!-- Pie Chart -->
+    <h4>Exspenses/Incomes</h4>
+    <section class="chart-container">
+      <canvas id="pieChart"></canvas>
+    </section>
+  </div>
+
+  <div class="main">
 
   <!-- Stats -->
   <section class="stats">
     <div class="stat-card">
-      <h3>Total Transactions</h3>
-      <p><%= totalTransactions %></p>
+      <img src="/wallet.png">
+      <h4>TOTAL TRANSACTIONS</h4>
+      <p style="color: #1579FB;"><%= totalTransactions %></p>
     </div>
     <div class="stat-card">
-      <h3>Total Income</h3>
-      <p>$ <%= totalIncome.toFixed(2) %></p>
-    </div>
-    <div class="stat-card">
-      <h3>Total Expense</h3>
+      <img src="/wallet-2.png">
+      <h4>TOTAL EXSPENSE</h4>
       <p>$ <%= totalExpense.toFixed(2) %></p>
     </div>
-  </section>
-
-  <!-- Pie Chart -->
-  <section class="chart-container">
-    <canvas id="pieChart"></canvas>
+    <div class="stat-card">
+      <img src="/wallet-3.png">
+      <h4>TOTAL INCOME</h4>
+      <p>$ <%= totalIncome.toFixed(2) %></p>
+    </div>
   </section>
 
   <!-- Transactions Section -->
@@ -190,6 +216,8 @@
       <button id="cancelDeleteBtn">Cancel</button>
     </div>
   </div>
+</div>
+</div>
 
   <script>
     // Pie Chart Initialization

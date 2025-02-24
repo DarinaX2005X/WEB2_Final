@@ -1,8 +1,46 @@
 body {
-  font-family: 'Arial', sans-serif;
-  background-color: #f0f2f5;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Poppins', sans-serif;
   margin: 0;
   padding: 0;
+}
+
+.content {
+  display: flex;
+  width: 100%;
+  flex-direction: row-reverse;
+}
+
+
+.sidebar {
+  height: 100vh;
+  width: 30%;
+  border-left: 3px solid #F6F7F9;
+  padding: 20px;
+}
+
+.sidebar h4 {
+  color: gray;
+  font-weight: 500;
+}
+
+/* Chart Container */
+.chart-container {
+  width: 90%;
+  max-width: 600px;
+  height: 300px;
+  margin: 20px auto;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.main {
+  width: 70%;
+  padding: 20px;
 }
 
 /* Containers */
@@ -24,24 +62,58 @@ body {
 
 /* Header */
 header {
-  background-color: #4267B2;
-  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 90%;
+  color: black;
   padding: 20px;
   text-align: center;
+  border-bottom: 3px solid #F6F7F9;
 }
 
-header nav {
-  margin-top: 10px;
+.header-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  text-align: left;
+  align-items: flex-start;
+  margin: 0;
 }
 
-header nav a, header nav button {
-  color: #fff;
-  margin: 0 10px;
-  text-decoration: none;
-  font-weight: bold;
-  background: none;
-  border: none;
-  cursor: pointer;
+.header-left p {
+  margin: 0;
+  color: #7C8490;
+  font-size: 24px;
+}
+
+.header-right {
+  display: flex;
+  width: 120px;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 15px;
+  background-color: #F6F7F9;
+}
+
+.header-button img {
+  width: 25px;
+  height: 25px;
+}
+
+.header-button a {
+  display: inline-block; /* Ensures the anchor wraps the image size */
+  width: 25px;
+  height: 25px;
 }
 
 .hero {
@@ -90,28 +162,33 @@ header nav a, header nav button {
   display: flex;
   justify-content: space-around;
   margin: 20px;
+  border-bottom: 3px solid #F6F7F9;
 }
 
 .stat-card {
   background-color: #fff;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  padding: 20px;
-  text-align: center;
+  padding: 30px;
+  text-align: left;
   flex: 1;
   margin: 0 10px;
 }
 
-/* Chart Container */
-.chart-container {
-  width: 90%;
-  max-width: 600px;
-  height: 300px;
-  margin: 20px auto;
-  background-color: #fff;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+.stat-card img {
+  display: flex;
+  width: 40px;
+  height: 40px;
+}
+
+.stat-card h4 {
+  color: gray;
+  font-weight: 300;
+}
+
+.stat-card p {
+  font-size: 30px;
+  font-weight: 600;
+  margin: 0;
 }
 
 /* Transactions Section */
@@ -122,7 +199,6 @@ header nav a, header nav button {
   background-color: #fff;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .transactions-header {
@@ -130,6 +206,10 @@ header nav a, header nav button {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
+}
+
+.transactions-header h2 {
+  color: #7C8490;
 }
 
 .filter-container {
@@ -145,17 +225,22 @@ header nav a, header nav button {
 #transactionsTable {
   width: 100%;
   border-collapse: collapse;
+  border: none;
 }
 
 #transactionsTable th, #transactionsTable td {
-  border: 1px solid #ddd;
+  border: none;
   padding: 8px;
   text-align: left;
 }
 
 #transactionsTable th {
-  background-color: #f2f2f2;
+  background-color:  #F6F7F9;
+  color: #7C8490;
+  font-weight: 400;
 }
+
+
 
 /* Amount styling */
 .amount.income {
