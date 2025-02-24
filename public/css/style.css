@@ -54,9 +54,7 @@ body {
 .form-container {
   background-color: #fff;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   padding: 20px;
-  margin: 20px auto;
   max-width: 400px;
 }
 
@@ -212,13 +210,70 @@ header {
   color: #7C8490;
 }
 
-.filter-container {
+.transaction-container {
   display: flex;
+  justify-content: space-around;
   align-items: center;
+  width: 200px;
 }
 
-.filter-container label {
-  margin-right: 5px;
+.filter-container {
+  position: relative;
+  display: inline-block;
+}
+
+#filter-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 15px;
+  background-color: #F6F7F9;
+  color: #7C8490;
+  border-radius: 15px;
+  padding: 10px 15px;
+}
+
+#filter-button img {
+  display: flex;
+  width: 20px;
+  height: 20px;
+}
+
+#filter-dropdown {
+  display: none;
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  padding: 15px;
+}
+
+#filter-dropdown label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+#filter-dropdown select {
+  width: 100%;
+  padding: 5px;
+}
+
+#addTransactionBtn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 15px;
+  background-color: #F6F7F9;
+  color: #7C8490;
+  border-radius: 15px;
+  padding: 10px 15px;
+}
+
+#addTransactionBtn img {
+  display: flex;
+  width: 20px;
+  height: 20px;
 }
 
 /* Transactions Table */

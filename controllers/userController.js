@@ -49,14 +49,14 @@ async function renderDashboardWithProfileError(req, errorMsg) {
       transactions = await Transaction.find({ user: user._id }).sort({ date: -1 });
     }
     transactions = await Transaction.populate(transactions, { path: 'user' });
-    const totalTransactions = transactions.length;
+    const currentBalance = transactions.length;
     const totalIncome = transactions.reduce((sum, tx) => tx.type === 'income' ? sum + tx.amount : sum, 0);
     const totalExpense = transactions.reduce((sum, tx) => tx.type === 'expense' ? sum + tx.amount : sum, 0);
     // Render dashboard with error message and flag to keep profile modal open
     req.res.render('dashboard', { 
       user, 
       transactions, 
-      totalTransactions, 
+      currentBalance, 
       totalIncome, 
       totalExpense,
       profileError: errorMsg,

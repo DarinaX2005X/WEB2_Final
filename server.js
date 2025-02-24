@@ -51,10 +51,10 @@ app.get('/dashboard', async (req, res, next) => {
       transactions = await Transaction.find({ user: user._id }).sort({ date: -1 });
     }
     transactions = await Transaction.populate(transactions, { path: 'user' });
-    const totalTransactions = transactions.length;
     const totalIncome = transactions.reduce((sum, tx) => tx.type === 'income' ? sum + tx.amount : sum, 0);
     const totalExpense = transactions.reduce((sum, tx) => tx.type === 'expense' ? sum + tx.amount : sum, 0);
-    res.render('dashboard', { user, transactions, totalTransactions, totalIncome, totalExpense });
+    const currentBalance = totalIncome - totalExpense;
+    res.render('dashboard', { user, transactions, currentBalance, totalIncome, totalExpense });
   } catch (err) {
     console.error(err);
     res.redirect('/login');
