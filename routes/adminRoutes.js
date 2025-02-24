@@ -13,12 +13,10 @@ function isAdmin(req, res, next) {
 }
 
 // Маршруты администратора
-router.get("/admin", authenticateJWT, isAdmin, adminController.adminDashboard);
-router.get(
-  "/admin/users",
-  authenticateJWT,
-  isAdmin,
-  adminController.manageUsers
-);
+router.get("/", authenticateJWT, isAdmin, adminController.adminDashboard);
+router.get("/users", authenticateJWT, isAdmin, adminController.manageUsers);
+router.get("/edit-user/:id", authenticateJWT, isAdmin, adminController.editUserForm);
+router.put("/edit-user/:id", authenticateJWT, isAdmin, adminController.editUser);
+router.get("/delete-user/:id", authenticateJWT, isAdmin, adminController.deleteUser);
 
 module.exports = router;

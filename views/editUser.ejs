@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit User</title>
+    <link rel="stylesheet" href="/css/style1.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Edit User</h1>
+        <form method="POST">
+            <input type="hidden" name="_method" value="PUT">
+            <div class="form-group">
+                <label>Username:</label>
+                <input type="text" name="username" value="<%= user.username %>" required>
+            </div>
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" name="email" value="<%= user.email %>" required>
+            </div>
+            <div class="form-group">
+                <label>Role:</label>
+                <select name="role" required>
+                    <option value="user" <%= user.role === 'user' ? 'selected' : '' %>>User</option>
+                    <option value="admin" <%= user.role === 'admin' ? 'selected' : '' %>>Admin</option>
+                </select>
+            </div>
+            <button type="submit">Save Changes</button>
+        </form>
+    </div>
+</body>
+</html>

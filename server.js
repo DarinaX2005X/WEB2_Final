@@ -7,17 +7,19 @@ const errorHandler = require("./middleware/errorMiddleware");
 const jwt = require("jsonwebtoken");
 const User = require("./models/User");
 const Transaction = require("./models/Transaction");
-
+const methodOverride = require('method-override');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Подключение к MongoDB
 connectDB();
 
+
 // Middleware
-app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));  // This must come first
 app.use(cookieParser());
+app.use(methodOverride('_method'));  // After body parsers
 app.use(express.static(path.join(__dirname, "public")));
 
 // Установка EJS в качестве шаблонизатора
@@ -29,10 +31,11 @@ const authRoutes = require("./routes/authRoutes");
 const transactionRoutes = require("./routes/transactionRoutes");
 const userRoutes = require("./routes/userRoutes");
 
-app.use("/", authRoutes); // /login, /register, /logout
+// Mount admin routes first
+app.use("/admin", adminRoutes);
+app.use("/", authRoutes);
 app.use("/transaction", transactionRoutes);
 app.use("/users", userRoutes);
-app.use(adminRoutes);
 // Страница index (главная)
 app.get("/", (req, res) => {
   res.render("index");
