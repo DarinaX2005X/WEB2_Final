@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard - Finance Tracker</title>
+  <link rel="stylesheet" href="/css/style1.css">
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <h1>Welcome, Admin <%= user.username %>!</h1>
+      <p>Admin Dashboard</p>
+    </div>
+    <div class="header-right">
+      <div class="header-button">
+        <a href="/logout">
+          <img src="/exit.png" id="logoutBtn">
+        </a>
+      </div>
+      <div class="header-button">
+        <a href="/dashboard">
+          <img src="/dashboard.png" id="logoutBtn">
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <div class="content">
+    <h2>Admin Panel</h2>
+    <p>Manage users and transactions here.</p>
+    <!-- Add more admin functionalities as needed -->
+  </div>
+</body>
+</html>
