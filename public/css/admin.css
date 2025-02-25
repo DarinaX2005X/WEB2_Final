@@ -10,36 +10,14 @@ body {
 
 .content {
   display: flex;
+  flex-direction: column;
   width: 100%;
-  flex-direction: row-reverse;
-}
-
-
-.sidebar {
-  height: 100vh;
-  width: 30%;
-  border-left: 3px solid #F6F7F9;
-  padding: 20px;
-}
-
-.sidebar h4 {
-  color: gray;
-  font-weight: 500;
-}
-
-/* Chart Container */
-.chart-container {
-  width: 90%;
-  max-width: 600px;
-  height: 300px;
-  margin: 20px auto;
-  background-color: #fff;
-  border-radius: 8px;
-  padding: 20px;
 }
 
 .main {
-  width: 70%;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
   padding: 20px;
 }
 
@@ -109,7 +87,7 @@ header {
 }
 
 .header-button a {
-  display: inline-block; /* Ensures the anchor wraps the image size */
+  display: inline-block; 
   width: 25px;
   height: 25px;
 }
@@ -122,7 +100,6 @@ header {
   color: #666;
 }
 
-/* Form Elements */
 .form-container form label {
   display: block;
   text-align: left;
@@ -174,32 +151,28 @@ header {
   margin: 0;
 }
 
-/* Transactions Section */
 .transactions {
   width: 90%;
-  max-width: 1000px;
+  max-width: 1200px; 
   margin: 20px auto;
   background-color: #fff;
   padding: 20px;
   border-radius: 8px;
 }
 
-.transactions-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
+.transactions table {
+  width: 100%; 
+  border-collapse: collapse; 
 }
 
-.transactions-header h2 {
-  color: #7C8490;
+.transactions th, .transactions td {
+  padding: 10px;
+  border: 1px solid #ddd; 
+  text-align: left; 
 }
 
-.transaction-container {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  width: 200px;
+.transactions th {
+  background-color: #f2f2f2; 
 }
 
 .filter-container {
@@ -262,28 +235,6 @@ header {
   height: 20px;
 }
 
-/* Transactions Table */
-#transactionsTable {
-  width: 100%;
-  border-collapse: collapse;
-  border: none;
-}
-
-#transactionsTable th, #transactionsTable td {
-  border: none;
-  padding: 8px;
-  text-align: left;
-}
-
-#transactionsTable th {
-  background-color:  #F6F7F9;
-  color: #7C8490;
-  font-weight: 400;
-}
-
-
-
-/* Amount styling */
 .amount.income {
   color: green;
 }
@@ -292,7 +243,6 @@ header {
   color: red;
 }
 
-/* Buttons */
 button {
   padding: 8px 12px;
   border: none;
@@ -315,7 +265,6 @@ button[type="submit"] {
   color: #fff;
 }
 
-/* Modals */
 .modal {
   display: none;
   position: fixed;
@@ -352,7 +301,70 @@ button[type="submit"] {
   color: #000;
 }
 
-/* Responsive */
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.cancel-btn {
+  background-color: #f44336;
+  color: #fff;
+}
+
+.save-btn {
+  background-color: #4CAF50;
+  color: #fff;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+
+#adminTable {
+  width: 100%;
+  border-collapse: collapse;
+  border: none;
+}
+
+#adminTable th, #adminTable td {
+  border: none;
+  padding: 8px;
+  text-align: left;
+}
+
+#adminTable th {
+  background-color: #F6F7F9;
+  color: #7C8490;
+  font-weight: 400;
+}
+
 @media (max-width: 600px) {
   .stats {
     flex-direction: column;
