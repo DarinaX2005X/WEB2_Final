@@ -21,9 +21,6 @@
     </div>
 
     <div class="header-right">
-      <div class="header-button">
-        <img src="/edit.png" id="editProfileBtn">
-      </div>
       <% if (user.role === 'admin') { %>
         <div class="header-button">
           <a href="/admin">
@@ -31,6 +28,9 @@
           </a>
         </div>
       <% } %>
+      <div class="header-button">
+        <img src="/edit.png" id="editProfileBtn">
+      </div>
       <div class="header-button">
         <a href="/logout">
           <img src="/exit.png" id="editProfileBtn">
