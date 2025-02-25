@@ -28,6 +28,12 @@ A full-stack web application for managing personal finances and transactions, fe
 ## Installation
 
 1. **Clone the repository**
-```bash
 git clone https://github.com/yourusername/finance-tracker.git](https://github.com/DarinaX2005X/WEB2_Final)
 cd finance-tracker
+Install dependencies
+npm install
+Configure environment variables
+Create .env file:
+PORT=3000
+MONGO_URI=mongodb://localhost:27017/finance-tracker
+JWT_SECRET=your_jwt_secret_key
