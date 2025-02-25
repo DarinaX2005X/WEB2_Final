@@ -87,9 +87,9 @@ header {
 
 .header-right {
   display: flex;
-  width: 120px;
+  width: 15%;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
 }
 
